@@ -80,7 +80,7 @@ python -m textblob.download_corpora
 source deactivate
 
 # More stuff to make CUDA (and Theano) work
-echo 'export PYTHONPATH=$PYTHONPATH:~/myProjectFolder' >> ~/.profile && echo 'export PATH=/usr/local/cuda-8.0/bin:$PATH' >> ~/.profile && echo 'export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH' >> ~/.profile && echo 'MKL_THREADING_LAYER=GNU' >> ~/.profile
+echo 'export PYTHONPATH=$PYTHONPATH:~/myProjectsRootFolder' >> ~/.profile && echo 'export PATH=/usr/local/cuda-8.0/bin:$PATH' >> ~/.profile && echo 'export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH' >> ~/.profile && echo 'MKL_THREADING_LAYER=GNU' >> ~/.profile
 source ~/.profile
 
 # Unless you're managing ENV variables via PyCharm or something else, you can add them to the virtualenv with:
