@@ -1,0 +1,88 @@
+# Getting python 3.6
+sudo add-apt-repository ppa:jonathonf/python-3.6
+sudo apt-get update
+sudo apt-get install python3.6
+sudo apt-get install python3-pip
+sudo apt-get install mingw-w64
+sudo apt-get install python3.6-dev
+
+# sudo apt-get install screen
+# sudo apt-get install rar
+
+cd ~
+mkdir tmp
+cd tmp
+
+# Install conda
+curl -O https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh
+sha256sum Anaconda3-5.0.1-Linux-x86_64.sh
+bash Anaconda3-5.0.1-Linux-x86_64.sh # basically: enter-s, yes, enter, yes
+cd ~
+source ~/.bashrc
+
+# Create virtualenv
+conda list
+conda create --name myEnvName python=3.6
+source activate myEnvName
+
+# Conda install basic packages, theano and gpu support
+conda install numpy scipy mkl
+conda install theano pygpu
+
+# Set up theano configuration, another option might be needed, they changed a lot of stuff in the past 2 releases
+touch .theanorc
+nano .theanorc 
+
+# TYPE THIS -->
+#[global]
+#device =cuda*
+#floatX = float32
+#mode=FAST_RUN
+#
+#[nvcc]
+#fastmath = True
+#flags = -D_FORCE_INLINES
+# <-- + SAVE
+
+source deactivate # deactivate virtualenv
+
+# Getting CUDA running
+gcc --version
+sudo apt-get install build-essential
+
+wget -O ~/tmp/cuda-repo-ubuntu1604_amd64.deb http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.61-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu1604_amd64.deb
+sudo apt-get update
+sudo apt-get install cuda
+sudo apt-get install cuda-drivers
+
+nvcc --version
+# If nvcc still not there, then:
+sudo apt-get install nvidia-cuda-toolkit
+
+nvidia-smi # Prints+updates gpu activity/jobs in a table, used for checking installation
+
+# Install Keras
+source activate myEnvName
+
+pip install keras
+mkdir .keras
+
+# Create, fill up Keras configuration
+touch .keras/keras.json
+echo "{" | sudo tee .keras/keras.json && echo "\"image_dim_ordering\": \"tf\"," | sudo tee -a .keras/keras.json && echo "\"epsilon\": 1e-07," | sudo tee -a .keras/keras.json && echo "\"floatx\": \"float64\"," | sudo tee -a .keras/keras.json && echo "\"backend\": \"theano\"" | sudo tee -a .keras/keras.json && echo "}" | sudo tee -a .keras/keras.json
+
+# My additional libraries, redundant
+pip install textblob premailer scikit-learn flask flask-cors pandas h5py apscheduler bugsnag blinker html2text pymysql matplotlib
+# Needed for textblob
+python -m textblob.download_corpora
+
+source deactivate
+
+# More stuff to make CUDA (and Theano) work
+echo 'export PYTHONPATH=$PYTHONPATH:~/myProjectFolder' >> ~/.profile && echo 'export PATH=/usr/local/cuda-8.0/bin:$PATH' >> ~/.profile && echo 'export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH' >> ~/.profile && echo 'MKL_THREADING_LAYER=GNU' >> ~/.profile
+source ~/.profile
+
+# Unless you're managing ENV variables via PyCharm or something else, you can add them to the virtualenv with:
+echo 'export RUN_ENV=development' >> ~/anaconda3/envs/myEnvName/bin/activate && echo 'export LOG_LVL=INFO' >> ~/anaconda3/envs/myEnvName/bin/activate
+# Need to stop and restart the virtualenv though, variables are applied on activation - not pretty tbh
